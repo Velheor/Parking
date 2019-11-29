@@ -10,7 +10,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class Parking {
     static List<Spot> spots = new ArrayList<Spot>();
-    static BlockingQueue<Car> carQueue = new ArrayBlockingQueue<Car>(10, true);
+    static BlockingQueue<Car> carQueue = new ArrayBlockingQueue<Car>(5, true);
 
     public static void main(String[] args) throws InterruptedException {
         Parking parking = new Parking();
@@ -25,13 +25,13 @@ public class Parking {
         }
         Thread.sleep(100);
 
-        for (int i = 1; i <= 2; i++) {
+        for (int i = 1; i <= 3; i++) {
             new Car(i, parking).start();
         }
 
         Thread.sleep(100);
 
-        for (int i = 3; i <= 5; i++) {
+        for (int i = 3; i <= 6; i++) {
             new Car(i, parking).start();
         }
 

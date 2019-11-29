@@ -69,11 +69,11 @@ public class Spot extends Thread {
 
     public boolean tryTake(int carNumber) throws InterruptedException {
         if (getState().equals(State.WAITING) && lock.tryLock()) {
-            if (lock.tryLock()){
-            //synchronized (this) {
+            if (lock.tryLock()) {
+                //synchronized (this) {
                 LOG.info("Spot " + number + " set car " + carNumber);
                 sleep(100);
-                LOG.info("Car " + number + " free spot " + carNumber);
+                LOG.info("Spot " + number + " free car " + carNumber);
                 carSet++;
                 //notify();
                 condition.signal();
