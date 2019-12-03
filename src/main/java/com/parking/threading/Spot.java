@@ -33,20 +33,17 @@ public class Spot extends Thread {
     public void run() {
         try {
             if (lock.tryLock(10, TimeUnit.MILLISECONDS)) {
-                //synchronized (this) {
                 while (canSetMore()) {
-                    //wait();
                     condition.await();
                     while (canSetMore()) {
-                        Car poll = parking.carQueue().poll();
+                        Car poll = parking.getCars().poll();
                         if (poll == null) {
-                            LOG.info("Car " + number + " got nobody from queue and going to wait");
+                            LOG.info("Spot " + number + " got nobody from queue and going to wait");
                             break;
                         }
                         setCar(poll);
                     }
                 }
-                //}
             }
         } catch (InterruptedException e) {
             LOG.error("Car " + number + " was killed", e);
@@ -69,17 +66,13 @@ public class Spot extends Thread {
 
     public boolean tryTake(int carNumber) throws InterruptedException {
         if (getState().equals(State.WAITING) && lock.tryLock()) {
-            if (lock.tryLock()) {
-                //synchronized (this) {
-                LOG.info("Spot " + number + " set car " + carNumber);
-                sleep(100);
-                LOG.info("Spot " + number + " free car " + carNumber);
-                carSet++;
-                //notify();
-                condition.signal();
-                lock.unlock();
-                return true;
-            }
+            LOG.info("Spot " + number + " set car " + carNumber);
+            sleep(100);
+            LOG.info("Spot " + number + " free car " + carNumber);
+            carSet++;
+            condition.signal();
+            lock.unlock();
+            return true;
         }
         return false;
     }

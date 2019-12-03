@@ -20,8 +20,6 @@ public class Car extends Thread {
     private Lock lock;
     private Condition condition;
 
-    private static final int WAIT_TIME = 2000;
-
     public Car(int number, Parking parking) {
         super("Car" + number);
         this.number = number;
@@ -33,11 +31,9 @@ public class Car extends Thread {
     @Override
     public void run() {
         if (lock.tryLock()) {
-            //synchronized (this) {
             try {
                 tryToTakeSpot();
                 if (!take) {
-                    //wait(200);
                     condition.await();
                     if (!take) {
                         bored = true;
@@ -51,7 +47,6 @@ public class Car extends Thread {
             } finally {
                 lock.unlock();
             }
-            // }
         }
     }
 
@@ -60,7 +55,6 @@ public class Car extends Thread {
             if (lock.tryLock()) {
                 take = true;
                 sleep(100);
-                //notify();
                 condition.signal();
                 LOG.info("Car " + number + " took spot after waiting in queue");
             }
@@ -71,7 +65,7 @@ public class Car extends Thread {
 
     private void goAway() {
         LOG.info("Car " + number + " bored with waiting and goes away");
-        parking.carQueue().remove(this);
+        parking.getCars().remove(this);
     }
 
     private void tryToTakeSpot() throws InterruptedException {
@@ -84,7 +78,7 @@ public class Car extends Thread {
         }
         if (!take) {
             LOG.info("Car " + number + " couldn't take spot and goes to the queue");
-            boolean offer = parking.carQueue().offer(this);
+            boolean offer = parking.getCars().offer(this);
             if (!offer) {
                 Thread.interrupted();
                 throw new InterruptedException();
